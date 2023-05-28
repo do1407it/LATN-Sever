@@ -37,21 +37,21 @@ export const register = asyncHandler(async (req, res) => {
       email,
       password,
    })
-
-   if (user) {
-      res.status(201).json({
-         _id: user._id,
-         name: user.name,
-         email: user.email,
-         isAdmin: user.isAdmin,
-         password: user.password,
-         token: generateToken(user._id),
-         createdAt: user.createdAt,
-      })
-   } else {
-      res.status(400)
-      throw new Error('Invalid user data')
-   }
+   res.send(user)
+   // if (user) {
+   //    res.status(201).json({
+   //       _id: user._id,
+   //       name: user.name,
+   //       email: user.email,
+   //       isAdmin: user.isAdmin,
+   //       password: user.password,
+   //       token: generateToken(user._id),
+   //       createdAt: user.createdAt,
+   //    })
+   // } else {
+   //    res.status(400)
+   //    throw new Error('Invalid user data')
+   // }
 })
 
 // PROFILE

@@ -7,6 +7,7 @@ import connectMongo from './config/MongoDB.js'
 import ImportData from './DataImport.js'
 import ProductRouter from './routes/products.js'
 import UserRouter from './routes/user.js'
+import OrderRouter from './routes/order.js'
 import { errorHandler, notFound } from './middleware/Error.js'
 
 dotenv.config()
@@ -23,6 +24,7 @@ app.use(cors())
 app.use('/api/import', ImportData)
 app.use('/api', ProductRouter)
 app.use('/api/users', UserRouter)
+app.use('/api/orders', OrderRouter)
 app.use(notFound)
 app.use(errorHandler)
 

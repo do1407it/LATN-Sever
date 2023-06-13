@@ -1,9 +1,10 @@
 import Product from '../models/Product.js'
 import asyncHandler from 'express-async-handler'
+import slugify from 'slugify'
 
 // PRODUCTS
 export const getProducts = asyncHandler(async (req, res) => {
-   const pageSize = 3
+   const pageSize = 6
    const page = Number(req.query.pageNumber) || 1
 
    const keyword = req.query.keyword || ''
@@ -22,6 +23,7 @@ export const getProducts = asyncHandler(async (req, res) => {
    })
       .skip(pageSize * (page - 1))
       .limit(pageSize)
+      .populate('category', 'title published')
 
    res.json(
       products && {
@@ -37,6 +39,39 @@ export const getProductById = asyncHandler(async (req, res) => {
    const product = await Product.findById(req.params.id)
    if (product) res.json(product)
    else res.status(404).json({ message: 'Product not found' })
+})
+
+export const getProductsCategory = asyncHandler(async (req, res) => {
+   const pageSize = 6
+   const page = Number(req.query.pageNumber) || 1
+
+   const keyword = req.query.keyword || ''
+
+   // Create a regular expression with case-insensitive flag
+   const regex = new RegExp(keyword.trim(), 'i')
+   const count = await Product.countDocuments({
+      name: {
+         $regex: regex,
+      },
+   })
+   const products = await Product.find({
+      name: {
+         $regex: regex,
+      },
+      category: req.params.category,
+   })
+      .skip(pageSize * (page - 1))
+      .limit(pageSize)
+      .populate('category', 'title published')
+
+   res.json(
+      products && {
+         products,
+         page,
+         keyword,
+         pages: Math.ceil(count / pageSize),
+      }
+   )
 })
 
 export const createProductReview = asyncHandler(async (req, res) => {
@@ -68,5 +103,75 @@ export const createProductReview = asyncHandler(async (req, res) => {
       }
    } else {
       res.status(404).json({ message: 'Product not found' })
+   }
+})
+
+export const createProduct = asyncHandler(async (req, res) => {
+   const { name, slug, price, description, image, countInStock, category, color, size } = req.body
+   const productExist = await Product.findOne({ name })
+   if (productExist) {
+      res.status(400)
+      throw new Error('Product name already exists')
+   } else {
+      if (req.body.name) {
+         req.body.slug = slugify(req.body.name)
+      }
+      const product = new Product({
+         name,
+         slug,
+         price,
+         description,
+         option: {
+            color,
+            size,
+         },
+         category,
+         image,
+         countInStock,
+         user: req.user._id,
+      })
+      if (product) {
+         if (req.body.name) {
+            req.body.slug = slugify(req.body.name)
+         }
+         const createdProduct = await product.save()
+
+         res.status(201).json(createdProduct)
+      } else {
+         res.status(400).json(createdProduct)
+         throw new Error('Invalid product data')
+      }
+   }
+})
+
+export const deleteProduct = asyncHandler(async (req, res) => {
+   const product = await Product.findById(req.params.id)
+
+   if (product) {
+      await product.remove()
+      res.json({ message: 'Product removed' })
+   } else {
+      res.status(404).json({ message: 'Product not found' })
+   }
+})
+
+export const updateProduct = asyncHandler(async (req, res) => {
+   const { name, price, description, image, countInStock, category, color, size } = req.body
+   const product = await Product.findById(req.params.id)
+   if (product) {
+      product.name = name || product.name
+      product.price = price || product.price
+      product.description = description || product.description
+      product.image = image || product.image
+      product.countInStock = countInStock || product.countInStock
+      product.category = category || product.category
+      product.color = color || product.color
+      product.size = size || product.size
+
+      const updatedProduct = await product.save()
+      res.json(updatedProduct)
+   } else {
+      res.status(404)
+      throw new Error('Product Not Found')
    }
 })

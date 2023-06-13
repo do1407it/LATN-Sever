@@ -66,6 +66,8 @@ export const updateOrderToPaid = asyncHandler(async (req, res) => {
 })
 
 export const getAllOrders = asyncHandler(async (req, res) => {
-   const orders = await Order.find({ user: req.user._id }).sort({ _id: -1 })
+   const orders = await Order.find({ user: req.user._id })
+      .sort({ _id: -1 })
+      .populate('user', 'name email')
    res.json(orders)
 })

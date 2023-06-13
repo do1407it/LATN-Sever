@@ -70,7 +70,11 @@ export const updateProfile = asyncHandler(async (req, res) => {
    if (user) {
       user.name = req.body.name || user.name
       user.email = req.body.email || user.email
-      if (req.body.password) user.password = req.body.password
+      if (req.body.password) {
+         user.password = req.body.password
+         // user.password = user.password
+      }
+
       const updatedUser = await user.save()
       res.json({
          _id: updatedUser._id,
@@ -84,4 +88,10 @@ export const updateProfile = asyncHandler(async (req, res) => {
       res.status(404)
       throw new Error('User not found')
    }
+})
+
+// GET ALL USERS
+export const getUsers = asyncHandler(async (req, res) => {
+   const users = await User.find({}).select('-password')
+   res.json(users)
 })

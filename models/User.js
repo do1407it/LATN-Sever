@@ -41,11 +41,38 @@ const UserSchema = new mongoose.Schema(
          minlength: 6,
          maxlength: 32,
       },
+
+      phone: {
+         type: String,
+         required: [true, 'Phone is required.'],
+         unique: true,
+         trim: true,
+         minlength: 10,
+         maxlength: 11,
+         validate: [
+            {
+               validator: function (value) {
+                  return /^[0-9]+$/.test(value) // Kiểm tra xem giá trị chỉ chứa các ký tự số
+               },
+               message: 'Phone must not contain special characters or accents.',
+            },
+            {
+               validator: function (value) {
+                  const firstChar = value.charAt(0)
+                  return /[0-9]/.test(firstChar) // Kiểm tra xem giá trị đầu tiên là một số
+               },
+               message: 'First character of phone must be a number.',
+            },
+         ],
+      },
+      image: {
+         type: String,
+         default: '',
+      },
       password: {
          type: String,
          required: true,
          minlength: 6,
-
       },
       isAdmin: {
          type: Boolean,

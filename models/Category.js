@@ -2,9 +2,13 @@ import mongoose from 'mongoose'
 
 const categorySchema = new mongoose.Schema(
    {
-      title: { type: String, required: [true, 'Please add a type name !'] },
+      title: {
+         type: String,
+         unique: true,
+         required: true,
+      },
       published: { type: Boolean, default: true },
-      description: { type: String, required: [true, 'Please add a description !'] },
+      description: { type: String, required: true },
    },
    {
       timestamps: true,

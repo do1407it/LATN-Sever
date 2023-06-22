@@ -14,7 +14,6 @@ const router = express.Router()
 router.get('/products', getProducts)
 router.get('/products/:keyword', getProducts)
 router.get('/products/category/:category', getProductsCategory)
-
 router.get('/product/:id', getProductById)
 
 // REVIEWS

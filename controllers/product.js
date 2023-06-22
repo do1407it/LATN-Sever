@@ -1,6 +1,18 @@
 import Product from '../models/Product.js'
 import asyncHandler from 'express-async-handler'
 import slugify from 'slugify'
+import cloudinary from 'cloudinary'
+
+cloudinary.config({
+   cloud_name: 'dnxjbypnj',
+   api_key: '988959716681975',
+   api_secret: 'mPhT8ZQuna4At9RtRxx8VokXEDU',
+})
+const opts = {
+   overwrite: true,
+   invalidate: true,
+   resource_type: 'auto',
+}
 
 // PRODUCTS
 export const getProducts = asyncHandler(async (req, res) => {
@@ -36,7 +48,7 @@ export const getProducts = asyncHandler(async (req, res) => {
 })
 
 export const getProductById = asyncHandler(async (req, res) => {
-   const product = await Product.findById(req.params.id)
+   const product = await Product.findById(req.params.id).populate('category', 'title published')
    if (product) res.json(product)
    else res.status(404).json({ message: 'Product not found' })
 })
@@ -107,7 +119,10 @@ export const createProductReview = asyncHandler(async (req, res) => {
 })
 
 export const createProduct = asyncHandler(async (req, res) => {
+   const fileStr = req.body.image
+   const uploadResponse = await cloudinary.uploader.upload(fileStr, opts)
    const { name, slug, price, description, image, countInStock, category, color, size } = req.body
+
    const productExist = await Product.findOne({ name })
    if (productExist) {
       res.status(400)
@@ -126,7 +141,7 @@ export const createProduct = asyncHandler(async (req, res) => {
             size,
          },
          category,
-         image,
+         image: uploadResponse.secure_url,
          countInStock,
          user: req.user._id,
       })

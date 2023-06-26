@@ -10,20 +10,11 @@ const categories = [
       description: 'Shoes for normal days',
    },
    {
-      title: 'Slide',
+      title: 'Sneaker',
       published: true,
       description: 'Slide for normal days',
    },
-   {
-      title: 'Slide',
-      published: true,
-      description: 'Slide for normal days',
-   },
-   {
-      title: 'Slide',
-      published: true,
-      description: 'Slide for normal days',
-   },
+  
 ]
 
 export default categories

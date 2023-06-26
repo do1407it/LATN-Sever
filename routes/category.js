@@ -9,7 +9,7 @@ import {
 import protect, { admin } from '../middleware/authMiddleware.js'
 const router = express.Router()
 
-router.get('/category', protect, admin, getCategories)
+router.get('/category', protect, getCategories)
 router.get('/category/:id', protect, admin, getCategoryById)
 
 router.delete('/category/:id', protect, admin, deleteCategory)

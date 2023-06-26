@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import Order from '../models/Order.js'
 import Product from '../models/Product.js'
+import nodeMailer from 'nodemailer'
 
 export const postOrderItems = asyncHandler(async (req, res) => {
    try {
@@ -101,5 +102,61 @@ export const updateDeliverToPaid = asyncHandler(async (req, res) => {
    } else {
       res.status(404)
       throw new Error('Order not found')
+   }
+})
+
+export const sendMail = asyncHandler(async (req, res) => {
+   const transporter = nodeMailer.createTransport({
+      service: 'Gmail',
+      auth: {
+         user: process.env.EMAIL,
+         pass: process.env.PASSWORD,
+      },
+   })
+
+   const orderItemsHTML = req.body.order.orderItems
+      .map(
+         (orderItem) => `
+      <tr>
+         <td>Name: ${orderItem.name}</td>
+         <td>Quantity: ${orderItem.qty}</td>
+         <td>Price: ${orderItem.price}</td>
+      </tr>
+   `
+      )
+      .join('')
+
+   const mainOptions = {
+      from: 'dotran',
+      to: req.body.email,
+      subject: 'Xác nhận đơn hàng',
+      text: `You received a message from ${req.body.name}`,
+      html: `
+         <h2>Thank you for your order</h2>
+         <h3>Order Details:</h3>
+         <table style="border-collapse: collapse;">
+            <thead>
+               <tr>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+               </tr>
+            </thead>
+            <tbody>
+               ${orderItemsHTML}
+               <tr>
+                  <td>Tax: ${req.body.order?.taxPrice}</td>
+                  <td>Total: ${req.body.order?.totalPrice}</td>
+               </tr>
+            </tbody>
+         </table>
+      `,
+   }
+
+   try {
+      const info = await transporter.sendMail(mainOptions)
+      res.status(200).json({ message: 'Email sent: ' + info.response })
+   } catch (err) {
+      res.status(400).json({ message: 'Email not sent: ' + err })
    }
 })

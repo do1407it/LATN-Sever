@@ -6,14 +6,14 @@ import {
    deleteProduct,
    createProduct,
    updateProduct,
-   getProductsCategory,
+   // getProductsCategory,
 } from '../controllers/product.js'
 import protect, { admin } from '../middleware/authMiddleware.js'
 const router = express.Router()
 
 router.get('/products', getProducts)
 router.get('/products/:keyword', getProducts)
-router.get('/products/category/:category', getProductsCategory)
+// router.get('/products/category/:category', getProductsCategory)
 router.get('/product/:id', getProductById)
 
 // REVIEWS

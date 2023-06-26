@@ -18,24 +18,46 @@ const opts = {
 export const getProducts = asyncHandler(async (req, res) => {
    const pageSize = 6
    const page = Number(req.query.pageNumber) || 1
-
    const keyword = req.query.keyword || ''
+   const category = req.query.category || ''
 
    // Create a regular expression with case-insensitive flag
    const regex = new RegExp(keyword.trim(), 'i')
-   const count = await Product.countDocuments({
-      name: {
-         $regex: regex,
-      },
-   })
-   const products = await Product.find({
-      name: {
-         $regex: regex,
-      },
-   })
-      .skip(pageSize * (page - 1))
-      .limit(pageSize)
-      .populate('category', 'title published')
+   let count, products
+
+   if (category) {
+      count = await Product.countDocuments({
+         name: {
+            $regex: regex,
+         },
+         category: category,
+      })
+
+      products = await Product.find({
+         name: {
+            $regex: regex,
+         },
+         category: category,
+      })
+         .skip(pageSize * (page - 1))
+         .limit(pageSize)
+         .populate('category', 'title published')
+   } else {
+      count = await Product.countDocuments({
+         name: {
+            $regex: regex,
+         },
+      })
+
+      products = await Product.find({
+         name: {
+            $regex: regex,
+         },
+      })
+         .skip(pageSize * (page - 1))
+         .limit(pageSize)
+         .populate('category', 'title published')
+   }
 
    res.json(
       products && {
@@ -46,6 +68,38 @@ export const getProducts = asyncHandler(async (req, res) => {
       }
    )
 })
+
+// export const getProducts = asyncHandler(async (req, res) => {
+//    const pageSize = 6
+//    const page = Number(req.query.pageNumber) || 1
+
+//    const keyword = req.query.keyword || ''
+
+//    // Create a regular expression with case-insensitive flag
+//    const regex = new RegExp(keyword.trim(), 'i')
+//    const count = await Product.countDocuments({
+//       name: {
+//          $regex: regex,
+//       },
+//    })
+//    const products = await Product.find({
+//       name: {
+//          $regex: regex,
+//       },
+//    })
+//       .skip(pageSize * (page - 1))
+//       .limit(pageSize)
+//       .populate('category', 'title published')
+
+//    res.json(
+//       products && {
+//          products,
+//          page,
+//          keyword,
+//          pages: Math.ceil(count / pageSize),
+//       }
+//    )
+// })
 
 export const getProductById = asyncHandler(async (req, res) => {
    const product = await Product.findById(req.params.id).populate('category', 'title published')
@@ -53,38 +107,38 @@ export const getProductById = asyncHandler(async (req, res) => {
    else res.status(404).json({ message: 'Product not found' })
 })
 
-export const getProductsCategory = asyncHandler(async (req, res) => {
-   const pageSize = 6
-   const page = Number(req.query.pageNumber) || 1
+// export const getProductsCategory = asyncHandler(async (req, res) => {
+//    const pageSize = 6
+//    const page = Number(req.query.pageNumber) || 1
 
-   const keyword = req.query.keyword || ''
+//    const keyword = req.query.keyword || ''
 
-   // Create a regular expression with case-insensitive flag
-   const regex = new RegExp(keyword.trim(), 'i')
-   const count = await Product.countDocuments({
-      name: {
-         $regex: regex,
-      },
-   })
-   const products = await Product.find({
-      name: {
-         $regex: regex,
-      },
-      category: req.params.category,
-   })
-      .skip(pageSize * (page - 1))
-      .limit(pageSize)
-      .populate('category', 'title published')
+//    // Create a regular expression with case-insensitive flag
+//    const regex = new RegExp(keyword.trim(), 'i')
+//    const count = await Product.countDocuments({
+//       name: {
+//          $regex: regex,
+//       },
+//    })
+//    const products = await Product.find({
+//       name: {
+//          $regex: regex,
+//       },
+//       category: req.params.category,
+//    })
+//       .skip(pageSize * (page - 1))
+//       .limit(pageSize)
+//       .populate('category', 'title published')
 
-   res.json(
-      products && {
-         products,
-         page,
-         keyword,
-         pages: Math.ceil(count / pageSize),
-      }
-   )
-})
+//    res.json(
+//       products && {
+//          products,
+//          page,
+//          keyword,
+//          pages: Math.ceil(count / pageSize),
+//       }
+//    )
+// })
 
 export const createProductReview = asyncHandler(async (req, res) => {
    const { rating, comment } = req.body

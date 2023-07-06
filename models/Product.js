@@ -33,18 +33,15 @@ export const ProductSchema = mongoose.Schema(
          required: true,
          ref: 'Category',
       },
-      option: {
-         color: { type: String },
-         size: { type: String },
-      },
       rating: { type: Number, required: true, default: 0 },
       numReviews: { type: Number, required: true, default: 0 },
       price: { type: Number, required: true, default: 0 },
       countInStock: { type: Number, required: true, default: 0 },
+
       // countInStock: [
       //    {
-      //       size: { type: String, required: true },
-      //       color: { type: String, required: true },
+      //       size: [{ type: String, required: true }],
+      //       color: [{ type: String, required: true }],
       //       quantity: { type: Number, required: true, default: 0 },
       //    },
       // ],

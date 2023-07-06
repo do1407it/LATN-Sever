@@ -1,13 +1,16 @@
 import asyncHandler from 'express-async-handler'
 import Order from '../models/Order.js'
 import Product from '../models/Product.js'
+import Coupon from '../models/Coupon.js'
+
 import nodeMailer from 'nodemailer'
 
 export const postOrderItems = asyncHandler(async (req, res) => {
    try {
-      // count in Stock and create order items
+      // count in Stock discount
       const {
          orderItems,
+         coupon,
          shippingAddress,
          paymentMethod,
          itemsPrice,
@@ -26,6 +29,7 @@ export const postOrderItems = asyncHandler(async (req, res) => {
          orderItems,
          user: req.user._id,
          shippingAddress,
+         coupon,
          paymentMethod,
          itemsPrice,
          taxPrice,
@@ -42,6 +46,12 @@ export const postOrderItems = asyncHandler(async (req, res) => {
             product.save()
          })
       })
+
+      if (coupon) {
+         const couponUsed = await Coupon.findById(coupon)
+         couponUsed.countInStock -= 1
+         couponUsed.save()
+      }
 
       const createdOrder = await order.save()
 
@@ -120,7 +130,7 @@ export const sendMail = asyncHandler(async (req, res) => {
       <tr>
          <td>Name: ${orderItem.name}</td>
          <td>Quantity: ${orderItem.qty}</td>
-         <td>Price: ${orderItem.price}</td>
+         <td>Price:$${orderItem.price}</td>
       </tr>
    `
       )
@@ -145,8 +155,8 @@ export const sendMail = asyncHandler(async (req, res) => {
             <tbody>
                ${orderItemsHTML}
                <tr>
-                  <td>Tax: ${req.body.order?.taxPrice}</td>
-                  <td>Total: ${req.body.order?.totalPrice}</td>
+                  <td>Tax: $${req.body.order?.taxPrice}</td>
+                  <td>Total: $${req.body.order?.totalPrice}</td>
                </tr>
             </tbody>
          </table>

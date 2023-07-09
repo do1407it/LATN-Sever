@@ -62,7 +62,7 @@ export const postOrderItems = asyncHandler(async (req, res) => {
 })
 
 export const getOrderById = asyncHandler(async (req, res) => {
-   const order = await Order.findById(req.params.id).populate('user', 'name email')
+   const order = await Order.findById(req.params.id).populate('user', 'name email phone')
 
    if (order) {
       res.json(order)

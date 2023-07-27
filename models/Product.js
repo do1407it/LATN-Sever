@@ -36,15 +36,20 @@ export const ProductSchema = mongoose.Schema(
       rating: { type: Number, required: true, default: 0 },
       numReviews: { type: Number, required: true, default: 0 },
       price: { type: Number, required: true, default: 0 },
-      countInStock: { type: Number, required: true, default: 0 },
+      countInStock: { type: Number, required: true, default: 0 }, //version old
 
-      // countInStock: [
-      //    {
-      //       size: [{ type: String, required: true }],
-      //       color: [{ type: String, required: true }],
-      //       quantity: { type: Number, required: true, default: 0 },
+      // countInStock: {
+      //    sizes: [Number],
+      //    colors: [String],
+      //    quantities: {
+      //       type: Map,
+      //       of: {
+      //          type: Map,
+      //          of: Number,
+      //       },
       //    },
-      // ],
+      //    totalCountInStock: { type: Number, required: true, default: 0 },
+      // },
    },
    {
       timestamps: true,

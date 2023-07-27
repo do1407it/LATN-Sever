@@ -10,6 +10,7 @@ import UserRouter from './routes/user.js'
 import OrderRouter from './routes/order.js'
 import CategoryRouter from './routes/category.js'
 import CouponRouter from './routes/coupon.js'
+import ColorRouter from './routes/color.js'
 import { errorHandler, notFound } from './middleware/Error.js'
 
 dotenv.config()
@@ -33,6 +34,7 @@ app.use('/api', ProductRouter)
 app.use('/api/users', UserRouter)
 app.use('/api', CategoryRouter)
 app.use('/api', CouponRouter)
+app.use('/api', ColorRouter)
 app.use('/api/orders', OrderRouter)
 app.get('/api/config/paypal', (req, res) => {
    res.send(process.env.PAYPAL_CLIENT_ID)

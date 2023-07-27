@@ -99,6 +99,19 @@ export const getAllOrders = asyncHandler(async (req, res) => {
    res.json(orders)
 })
 
+export const chartOrder = asyncHandler(async (req, res) => {
+   const fromDate = new Date(req.query.fromDate)
+   const toDate = new Date(req.query.toDate)
+   const orders = await Order.find({}).populate('user', 'name email')
+
+   const filteredOrders = orders.filter((order) => {
+      const orderDate = new Date(order.createdAt)
+      return orderDate >= fromDate && orderDate <= toDate
+   })
+
+   res.status(200).json(filteredOrders.length)
+})
+
 export const updateDeliverToPaid = asyncHandler(async (req, res) => {
    const order = await Order.findById(req.params.id)
 

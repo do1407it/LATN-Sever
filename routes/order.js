@@ -6,14 +6,18 @@ import {
    getAllOrders,
    updateDeliverToPaid,
    sendMail,
-   chartOrder
+   chartOrder,
+   getAllOrderByUser,
 } from '../controllers/order.js'
 import protect from '../middleware/authMiddleware.js'
 
 const router = express.Router()
 
 router.post('/', protect, postOrderItems)
+
 router.get('/', protect, getAllOrders)
+router.get('/profile', protect, getAllOrderByUser)
+
 router.get('/thongke', chartOrder)
 
 router.get('/:id', protect, getOrderById)

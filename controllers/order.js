@@ -99,6 +99,11 @@ export const getAllOrders = asyncHandler(async (req, res) => {
    res.json(orders)
 })
 
+export const getAllOrderByUser = asyncHandler(async (req, res) => {
+   const orders = await Order.find({ user: req.user._id }).populate('user', 'name email')
+   res.json(orders)
+})
+
 export const chartOrder = asyncHandler(async (req, res) => {
    const fromDate = new Date(req.query.fromDate)
    const toDate = new Date(req.query.toDate)

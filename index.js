@@ -39,6 +39,10 @@ app.use('/api/orders', OrderRouter)
 app.get('/api/config/paypal', (req, res) => {
    res.send(process.env.PAYPAL_CLIENT_ID)
 })
+app.get('/test', (req, res) => {
+   res.send('Hello World!')
+})
+
 // Error Handling
 app.use(notFound)
 app.use(errorHandler)

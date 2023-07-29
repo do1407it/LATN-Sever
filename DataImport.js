@@ -10,6 +10,8 @@ import Coupon from './models/Coupon.js'
 import coupon from './data/Coupon.js'
 import Color from './models/Color.js'
 import colors from './data/Color.js'
+import Size from './models/Size.js'
+import size from './data/Size.js'
 
 const ImportData = express.Router()
 
@@ -55,6 +57,15 @@ ImportData.post(
       await Color.remove({})
       const importColor = await Color.insertMany(colors)
       res.send({ importColor })
+   })
+)
+
+ImportData.post(
+   '/size',
+   asyncHandler(async (req, res) => {
+      await Size.remove({})
+      const importSize = await Size.insertMany(size)
+      res.send({ importSize })
    })
 )
 
